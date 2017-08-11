@@ -1,57 +1,116 @@
 #coding:utf-8
 import tensorflow as tf
-import tensorlayer as tl
+import numpy as np
+from tensorflow.examples.tutorials.mnist import input_data
+import argparse
+FLAGS = None
 
-sess = tf.InteractiveSession()
+def Generator(Z):
+"""
+Args:
+    Z:random distribution,size:(100,)
+Return:
+    G(z):Generate image
+"""
+    theta_G = []
+    with tf.name_scope("G_nn1"):
+        weight = tf.Variable([100,128],name = "G_weight")
+        bias = tf.Variable([128],name = "G_bias")
+        G_nn1_output = tf.nn.relu(tf.matmul(z,weight)+bias,name = "G_nn1_output")
+        theta_G.append(weight).append(bias)
+    with tf.name_scope("G_nn2"):
+        weight = tf.Variable([128,784],name = "G_weight")
+        bias = tf.Variable([784],name = "G_bias")
+        G_nn2_output = tf.nn.sigmod(tf.matmul(G_nn1_output,weight)+bias,name="G_nn2_output")
+        theta_G.append(weight).append(bias)
+    return G_nn2_output,theta_G
 
-# 准备数据
-X_train, y_train, X_val, y_val, X_test, y_test = \
-                                tl.files.load_mnist_dataset(shape=(-1,784))
+def Discriminator(x,reuse=None):
+    """
+    args:
+        x:input image,size:(784,)
+    return:
+        prob and logits
+    """
+    theta_D = []
+    with tf.variable_scope("D_nn1",reuse=True):
+        weight = tf.get_variable([784,128],name="D_weight")
+        bias = tf.get_variable([784],name = "D_bias")
+        D_nn1_output = tf.nn.relu(tf.matmul(x,weight)+bias,name ="D_nn1_output")
+        theta_D.append(weight).append(bias)
 
-# 定义 placeholder
-x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
-y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
+    with tf.variable_scope("D_nn2",reuse=True):
+        weight = tf.get_variable([128,1],name = "D_weight")
+        bias = tf.get_variable([128],name ="D_bias")
+        D_nn2_prob = tf.matmul(D_nn1_output,weight)+bias
+        D_nn2_output = tf.sigmod(D_nn2_prob,name = "D_nn2_output")
+        theta_D.append(weight).append(bias)
+    
+    return D_nn2_prob,D_nn2_output,theta_D
 
-# 定义模型
-network = tl.layers.InputLayer(x, name='input_layer')
-network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
-network = tl.layers.DenseLayer(network, n_units=800,
-                                act = tf.nn.relu, name='relu1')
-network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
-network = tl.layers.DenseLayer(network, n_units=800,
-                                act = tf.nn.relu, name='relu2')
-network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
-network = tl.layers.DenseLayer(network, n_units=10,
-                                act = tf.identity,
-                                name='output_layer')
-# 定义损失函数和衡量指标
-# tl.cost.cross_entropy 在内部使用 tf.nn.sparse_softmax_cross_entropy_with_logits() 实现 softmax
-y = network.outputs
-cost = tl.cost.cross_entropy(y, y_, name = 'cost')
-correct_prediction = tf.equal(tf.argmax(y, 1), y_)
-acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-y_op = tf.argmax(tf.nn.softmax(y), 1)
 
-# 定义 optimizer
-train_params = network.all_params
-train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
-                            epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
+def training():
+    #prepare mnist data
+    data_set = input_data.read_data_sets(FLAGS.input_data_dir);
 
-# 初始化 session 中的所有参数
-tl.layers.initialize_global_variables(sess)
+    z = tf.placeholder(tf.float32,[None,100],name = "Z")
+    x = tf.placeholder(tf.float32,[None,784],name = "input")
+    G_sample,theta_G= Generator(z)
+    D_real,D_logit_real,theta_D= Discriminator(x)
+    D_fake,D_logit_fake,_= Discriminator(G_sample,reuse=True)
 
-# 列出模型信息
-network.print_params()
-network.print_layers()
+    #loss function
+    D_loss = -tf.reduce_mean(tf.log(D_real)+tf.log(1. - D_fake))
+    G_loss = -tf.reduce_mean(tf.log(D_fake))
 
-# 训练模型
-tl.utils.fit(sess, network, train_op, cost, X_train, y_train, x, y_,
-            acc=acc, batch_size=500, n_epoch=500, print_freq=5,
-            X_val=X_val, y_val=y_val, eval_train=False)
 
-# 评估模型
-tl.utils.test(sess, network, acc, X_test, y_test, x, y_, batch_size=None, cost=cost)
+    #optimizer
+    D_optimizer = tf.train.AdamOptimizer().minimize(D_loss, var_list=theta_D)
+    G_optimizer = tf.train.AdamOptimizer().minimize(G_loss, var_list=theta_G)
 
-# 把模型保存成 .npz 文件
-tl.files.save_npz(network.all_params , name='model.npz')
-sess.close()
+    session = tf.Session()
+    session.run(global_variables_initializer())
+
+    for step in range(FLAGS.max_steps):
+        X_input,_ = data_set.train.next_batch(FLAGS.batch_size)
+
+        z_sample = sample([FLAGS.batch_size,100]);
+        _,D_loss = session.run([D_optimizer,D_loss],feed_dict ={
+            x:x_input,
+            z:z_sample
+            })
+        _,G_loss = session.run([G_optimizer,G_loss],feed_dict ={
+            z:z_sample
+            })
+
+def main(_):
+    training()
+
+
+if __name__=="__main__":
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--input_data_dir',
+        type = str,
+        default = "/data/mnist",
+        help = "directory of mnist data"
+        )
+
+    parser.add_argument(
+        '--batch_size',
+        type='int',
+        default=256,
+        help="batch size"
+        )
+
+    parser.add_argument(
+        '--max_steps',
+        type='int',
+        defult=10000,
+        help='max steps'
+        )
+
+    FLAGS, unparsed = parser.parse_known_args()
+    tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
