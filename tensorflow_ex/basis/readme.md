@@ -2,7 +2,7 @@
 系统环境：ubuntu14.04，tensorflow1.12
 内容：主要介绍tensorflow中name_scope，variable_scope和get_variable函数的使用
 
-##tf.name_scope()和tf.variable_scope()区别
+## tf.name_scope()和tf.variable_scope()区别
 <br />
 在tensorflow中，两个函数均是用于定义命名空间。二者的区别主要在于<font color = 'red'>**variable_scope可以与get_variable()函数实现变量的reuse。**</font>下面通过例子讲解
 ###tf.name_scope函数
