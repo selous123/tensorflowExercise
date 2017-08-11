@@ -5,7 +5,7 @@
 ## tf.name_scope()和tf.variable_scope()区别
 <br />
 在tensorflow中，两个函数均是用于定义命名空间。二者的区别主要在于<font color = 'red'>**variable_scope可以与get_variable()函数实现变量的reuse。**</font>下面通过例子讲解<br />
-### tf.name_scope函数
+### tf.name_scope函数 <br />
 ```python
 import tensorflow as tf
 with tf.name_scope("compute") as scope:
