@@ -145,5 +145,6 @@ result2 = my_image_filter(image2)
 <li>tf.random_normal_initializer(mean,stddev)</li>
 
 
-[0]:http://wiki.jikexueyuan.com/project/tensorflow-zh/how_tos/variable_scope.html
+[0]:http://wiki.jikexueyuan.com/project/tensorflow-zh/how_tos/variable_scope.html  
+
 [1]:https://www.tensorflow.org/programmers_guide/variable_scope
