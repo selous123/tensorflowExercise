@@ -2,9 +2,9 @@
 系统环境：ubuntu14.04，tensorflow1.12
 内容：主要介绍tensorflow中name_scope，variable_scope和get_variable函数的使用
 
-##tf.name_scope()和tf.variable_scope()区别
+## tf.name_scope()和tf.variable_scope()区别
 在tensorflow中，两个函数均是用于定义命名空间。二者的区别主要在于<font color = 'red'>**variable_scope可以与get_variable()函数实现变量的reuse。**</font>下面通过例子讲解
-###tf.name_scope函数
+### tf.name_scope函数
 ```python
 import tensorflow as tf
 with tf.name_scope("compute") as scope:
@@ -23,7 +23,7 @@ compute/add/Add:0
 """
 ```
 
-###tf.variable_scope()函数
+### tf.variable_scope()函数
 ```python
 with tf.variable_scope("variable_scope"):   
     with tf.name_scope("name_scope") as scope:
@@ -44,9 +44,9 @@ variable_scope/name_scope/add/Add:0
 
 从上面的例子可以看出，**name_scope函数会忽略get_variable函数初始化的变量**，即不在变量前加prefix。而variable_scope函数不会忽略。
 
-##tf.Variable()和tf.get_variable()区别
+## tf.Variable()和tf.get_variable()区别
 当出现同名的变量时，<font color='red'>Variable()函数会自动进行冲突处理，而get_variables()会raise ValueError exception。</font>下面是相关例子
-###tf.Variable()
+### tf.Variable()
 ```python
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
@@ -66,7 +66,7 @@ test/Variable:0 test/Variable_1:0
 """
 ```
 <font color="red">a_1和a_2是名称是一样的，由于是variable定义的，所以会在变量名称后面添加<i>"_1"</i>作为区分。</font>
-###tf.get_variable()
+### tf.get_variable()
 ```python
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
@@ -86,10 +86,10 @@ ValueError: Variable get_variable/b already exists, disallowed. Did you mean to 
 由于系统中变量出现命名冲突，且get_variable并不会自动处理冲突，所以就会出现ERROR
 这样设计的原因是为了方便共享变量的实现
 
-##tf.get_variable()和tf.variable_scope()配合实现共享变量
+## tf.get_variable()和tf.variable_scope()配合实现共享变量
 <font color="red">tf.variable()生成的变量如果想要参数共享，就需要将变量定义成全局的变量。</font>tensorflow使用了get_variable来实现变量共享，variable_scope的命名空间会管理这些共享变量
 下面举例子说明几种代码重用的方式
-###不同的scope中共享
+### 不同的scope中共享
 ```python
 with tf.variable_scope("foo"):
     v = tf.get_variable("v", [1])
@@ -113,7 +113,7 @@ ValueError: Variable foo/v1 does not exist, or was not created with tf.get_varia
 ```
 需要注意的一点是：<font color="red">既然scope已经被定义成了reuse属性，那么在之后使用的get_variable的属性全部都要是已经定义好的不然会报错</font>,参考上面错误实例的例子
 
-###同一个scope中共享
+### 同一个scope中共享
 ```python
 with tf.variable_scope("foo") as scope:
     v = tf.get_variable("v",initializer=1.0)
@@ -125,8 +125,8 @@ print v.name,v1.name
 同上面一样，在设置为reuse之后，该作用于下的之后所有的get_variable所涉及的变量全部都要是共享变量。
 关于tensorflow的变量共享可以参看下面的文章：[【极客学院】][0]
 
-</br>
-</br>
+<br />
+<br />
 <font size=5>问题：</font>官方文档中给的cnn的例子，为什么我在自己实现cnn的时候没有注意到共享变量这一点？关于cnn的代码是否需要考虑共享变量？
 <font size=5>答案：</font>在我的cnn代码中并没有涉及共享变量这个问题。以为图像的卷积操作op从头到尾也只调用了一次。不会出现[官方文档][1]中所说的
 ```python
