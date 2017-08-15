@@ -5,6 +5,7 @@ tensorflow的源代码中有很多example，从那些大牛们的源代码中我
 
 <hr />
 <font color='red'>该篇博文按照博主的代码格式变化的时间顺序组织</font>
+
 ## 简单的代码组织
  <li>tensorflow中将所有的操作都看做是节点，所有的节点组成一个前驱图，也就是tensorflow中提到的Graph计算图结构。</li>
  <li>tensorflow的另一个模块是session模块，通过session为之前建立好的Graph“喂(feed)数据”,然后从图的末端fetch需要的结果。</li>
