@@ -1,4 +1,5 @@
-撰写时间：2017.8.11
+撰写时间：2017.8.11  
+
 系统环境：ubuntu14.04，tensorflow1.12
 内容：主要介绍tensorflow中name_scope，variable_scope和get_variable函数的使用
 
