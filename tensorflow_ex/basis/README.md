@@ -128,6 +128,7 @@ print v.name,v1.name
 <br />
 <font size=5>问题：</font>官方文档中给的cnn的例子，为什么我在自己实现cnn的时候没有注意到共享变量这一点？关于cnn的代码是否需要考虑共享变量？
 <font size=5>答案：</font>在我的cnn代码中并没有涉及共享变量这个问题。以为图像的卷积操作op从头到尾也只调用了一次。不会出现[官方文档][1]中所说的  
+
 ```python
 # First call creates one set of 4 variables.
 result1 = my_image_filter(image1)
