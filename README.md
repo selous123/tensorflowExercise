@@ -153,13 +153,19 @@ def evaluation(labels,logits):
 关于如何调用，可以参考主函数的实现。[github地址](https://github.com/selous123/tensorflowExercise/blob/master/tensorflow_ex/ex1/dnn.py),代码中的run_training函数就是上面提到的training函数。
 
 ## 使用类CLASS
+
 上述的代码组织结构的问题在于
+
 <li>1.很难支持模型复用，也就是面向过程与面向对象的差别</li>
 <li>2.没有涉及到数据的处理。因为所有的数据都是使用常用数据集，使用别人写好的api</li>
+
 <font color="red">**所以下面的内容涉及的就是关于使用类重构代码以及写自己的数据集api**</font>
+
 下面的内容主要是数据类和模型类中常用的一些函数，以及具体的实例代码github(代码是一个使用cnn网络识别图像的多分类问题)
+
 ### 数据类(图像数据示例)
-```
+
+```python
 class DataSet(object):
 	def __init__():
 	@property
@@ -172,6 +178,7 @@ class DataSet(object):
 	def epoches_completed():
 	def next_batch():
 ```
+
 [实例代码](https://github.com/selous123/malware/blob/master/dataset/load_malware.py)
 ### 计算model类
 ```
@@ -192,6 +199,7 @@ class Model(object):
 
 <font size=6>问题1：</font>为什么在model中使用lazy_property?
 首先要明白model中的所有函数都是用来建立计算图的，所以每一个函数运行一次和运行多次，那么建立的图的结构就会不同。为lazy_property的作用就是在函数运行一次之后，第二次调用的时候就不在运行，而是直接返回结果。
+
 ```
 def lazy_property(func):
     attr_name = "_lazy_" + func.__name__
@@ -203,5 +211,6 @@ def lazy_property(func):
     return _lazy_property
 ```
 [参考地址](http://danijar.com/structuring-your-tensorflow-models/)
+
 <font size=6>问题2：</font>主函数中的代码组织结构？
 <font size=6>回答：</font>主函数中主要使用第三方包argparse解析参数，代替了tensorflow中的官方配置文件的方式。如果你是新手，可以直接使用和我代码中一样的格式，我的代码格式也是模仿的别人。
