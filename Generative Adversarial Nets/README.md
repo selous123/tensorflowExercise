@@ -1,3 +1,6 @@
+<script type="text/javascript"
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 撰写时间：2017.8.18
 
 # GANs实现(Generative Adversarial Networks)
