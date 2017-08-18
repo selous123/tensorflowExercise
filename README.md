@@ -192,7 +192,6 @@ class Model(object):
 	def error():
 ```
 [实例代码](https://github.com/selous123/malware/blob/master/dataset/malware_model.py)
-
 [主函数代码](https://github.com/selous123/malware/blob/master/dataset/main.py)
 这个项目还在测试中，所以主函数的测试数据还没有喂到模型中。主要看代码结构吧
 
