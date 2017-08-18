@@ -22,7 +22,7 @@ $\max_D(V)$使得判别器具有识别真伪的能力，而$\min_G(V)$使得判�
 因为代码面向的新手，所以不管是原始架构，还是代码的编辑，都是采用了最简单的方式。数据也选择了最常用的mnist数据。目的就是让读者可以无障碍的理解。==GAN网络的原理和代码真的很简单，所以如果初次接触真的不需要害怕它。==
 
 ### 网络架构
-![structure ](/home/lrh/Pictures/graph-run=.png  "structure")
+![structure ](graph-run=.png  "structure")
 #### 架构说明：
 
 * D_开头的节点就是判别器网络架构，==简单的两层全连接层。==输入是x,shape为[batch_size,28*28],输出是[batch_size]。
@@ -124,11 +124,10 @@ merged_summary_op = tf.summary.merge_all()
 
 由于选择的网络比较简单，所以结果比较一般，还在跑着，贴一张loss函数图
 
-![](/home/lrh/Pictures/Selection_008.jpg) 
+![](Selection_008.jpg) 
 
 Discriminator的能力越来越强，但是generator并没有很快的增强，以至于G_loss在不断增大。可以通过调整g_step和d_step调整两个更新的比例关系(源代码中有涉及到这两个参数)
-
-
+![](Selection_009.jpg) 
 
 
 
