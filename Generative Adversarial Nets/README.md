@@ -127,6 +127,7 @@ merged_summary_op = tf.summary.merge_all()
 ![](Selection_008.jpg) 
 
 Discriminator的能力越来越强，但是generator并没有很快的增强，以至于G_loss在不断增大。可以通过调整g_step和d_step调整两个更新的比例关系(源代码中有涉及到这两个参数)
+
 ![](Selection_009.jpg) 
 
 
