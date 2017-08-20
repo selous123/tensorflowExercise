@@ -24,6 +24,7 @@ def inference(images):
         images_input = tf.reshape(images,[-1,28,28,1],name = 'reshape');
 
     with tf.name_scope('conv1'):
+        #filter
         weight = tf.Variable(tf.truncated_normal(shape = [5,5,1,32],stddev=0.1),name = 'weight');
         bias = tf.Variable(tf.constant(0.1,shape = [32]));
         conv1 = tf.nn.relu(tf.nn.conv2d(images_input,weight,strides=[1, 1, 1, 1], padding='SAME')+bias)

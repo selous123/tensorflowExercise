@@ -53,8 +53,8 @@ def train_runing():
     for i in range(10000):
         feed_dict = fill_feed_dict(data_set.train,images_placeholder,labels_placeholder);
         if i%100 == 0:
-            train_accuracy = accuracy.eval(feed_dict=feed_dict)
-            #print("step %d, training accuracy %g"%(i, train_accuracy))
+            train_accuracy,p = sess.run([accuracy,logits],feed_dict=feed_dict)
+            print("step:{}, training accuracy:{},prediction:{}").format(i, train_accuracy,p)
             summary_str = sess.run(summary, feed_dict=feed_dict)
             summary_writer.add_summary(summary_str, i)
             summary_writer.flush()

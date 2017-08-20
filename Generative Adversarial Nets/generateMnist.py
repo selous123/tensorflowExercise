@@ -107,11 +107,11 @@ def training():
                     })
             img = np.array(G_sample_curr).reshape(-1,28,28)
             img_dir = str(step/1000)
-            if tf.gfile.Exists(img_dir):
-                tf.gfile.DeleteRecursively(img_dir);
-            tf.gfile.MakeDirs(img_dir);
+            if tf.gfile.Exists(FLAGS.output_dir+img_dir):
+                tf.gfile.DeleteRecursively(FLAGS.output_dir+img_dir);
+            tf.gfile.MakeDirs(FLAGS.output_dir+img_dir);
             for ind in range(FLAGS.batch_size):
-                cv2.imwrite(img_dir+"/"+str(ind)+".jpg",img[ind]*255)
+                cv2.imwrite(FLAGS.output_dir+img_dir+"/"+str(ind)+".jpg",img[ind]*255)
 def main(_):
     training()
 
@@ -123,7 +123,7 @@ if __name__=="__main__":
     parser.add_argument(
         '--input_data_dir',
         type = str,
-        default = "/mnt/hgfs/ubuntu14/dataset/mnist",
+        default = "/home/lrh/dataset/mnist",
         help = "directory of mnist data"
         )
 
@@ -159,6 +159,12 @@ if __name__=="__main__":
         default="/tmp/gan/log",
         help='the log directory'
         )
+
+    parser.add_argument(
+        '--output_dir',
+        type=str,
+        default="/tmp/gan/mnist/",
+        help="output directory")
 
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
