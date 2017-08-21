@@ -18,11 +18,12 @@ def training():
 
     z = tf.placeholder(tf.float32,[FLAGS.batch_size,100],name = "Z")
     x = tf.placeholder(tf.float32,[FLAGS.batch_size,784],name = "input")
+    
     dcgansM = DCGANsModel(x,z)
     
-    G_sample = dcgansM.generator()
-    D_optimizer,G_optimizer = dcgansM.optimize
-    D_loss,G_loss = dcgansM.loss
+    G_sample,_,_ = dcgansM.inference
+    D_loss,G_loss,D_optimizer,G_optimizer = dcgansM.optimize
+    #= dcgansM.loss
     
     
 
@@ -47,17 +48,17 @@ def training():
             _,G_loss_curr = session.run([G_optimizer,G_loss],feed_dict ={
                 z:z_sample
                 })
-        if step%1000==0:
+        if step%100==0:
             print "step:{},D_loss:{},G_loss:{}".format(step,D_loss_curr,G_loss_curr)
             summary_str = session.run(merged_summary_op,feed_dict={x: x_input, z:z_sample});
             summary_writer.add_summary(summary_str, step);
             #print D_real_curr
-        if step%1000 == 0:
+        if step%100 == 0:
             G_sample_curr = session.run([G_sample],feed_dict={
                     z:z_sample
                     })
             img = np.array(G_sample_curr).reshape(-1,28,28)
-            img_dir = str(step/1000)
+            img_dir = str(step/100)
             if tf.gfile.Exists(FLAGS.output_dir+img_dir):
                 tf.gfile.DeleteRecursively(FLAGS.output_dir+img_dir);
             tf.gfile.MakeDirs(FLAGS.output_dir+img_dir);
@@ -95,7 +96,7 @@ if __name__=="__main__":
     parser.add_argument(
         '--g_steps',
         type=int,
-        default=2,
+        default=5,
         help='Generator steps'
         )
     parser.add_argument(
