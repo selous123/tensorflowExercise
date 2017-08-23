@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import argparse
 import sys
-import cnn_network as cnn_mnist
+import cifar10.cnn_network as cnn_mnist
 FLAGS = None;
 
 NUMCLASS = 10;
